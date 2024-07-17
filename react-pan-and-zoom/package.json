@@ -1,7 +1,6 @@
 {
   "name": "react-pan-and-zoom",
   "description": "A React component to pan and zoom using a trackpad, mouse or touchscreen",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
   "files": [
@@ -30,16 +29,27 @@
   ],
   "author": "David Hérault <dherault@gmail.com> (https://github.com/dherault)",
   "scripts": {
+    "dev": "nodemon --exec 'npm run build' --watch src --ext ts,tsx --ignore dist",
     "build": "tsc -b && vite build",
     "lint": "tsc && eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@types/react": "^18.3.3",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8.57.0",
     "eslint-config-dherault-typescript": "^1.3.6",
+    "nodemon": "^3.1.4",
     "typescript": "^5.5.3",
-    "vite": "^5.3.4"
+    "vite": "^5.3.4",
+    "vite-plugin-dts": "^4.0.0-beta.0"
+  },
+  "peerDependencies": {
+    "react": "^18.x.x",
+    "react-dom": "^18.x.x"
+  },
+  "dependencies": {
+    "@use-gesture/react": "^10.3.1"
   }
 }
