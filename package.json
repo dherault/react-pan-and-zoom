@@ -1,0 +1,29 @@
+{
+  "name": "react-pan-and-zoom-monorepo",
+  "description": "A React component to pan and zoom using a trackpad, mouse or touchscreen",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "lint": "(cd react-pan-and-zoom && npm run lint) && (cd demo && npm run lint)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/dherault/react-pan-and-zoom.git"
+  },
+  "keywords": [
+    "react",
+    "pan",
+    "zoom"
+  ],
+  "author": "David Hérault <dherault@gmail.com> (https://github.com/dherault)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dherault/react-pan-and-zoom/issues"
+  },
+  "homepage": "https://github.com/dherault/react-pan-and-zoom#readme",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-dherault-typescript": "^1.3.6",
+    "husky": "^9.1.0"
+  }
+}
