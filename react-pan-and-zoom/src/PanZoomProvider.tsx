@@ -10,9 +10,9 @@ type Props = PropsWithChildren<{
   forceMouseType?: MouseType
   initialZoom?: number
   initialPan?: Xy
-  boundPan?: boolean
-  boundPanPadding?: Padding
-  boundZoom?: boolean
+  isPanBounded?: boolean
+  panBoundPadding?: Padding
+  isZoomBounded?: boolean
   minZoom?: number
   maxZoom?: number
   zoomStrength?: number
@@ -23,9 +23,9 @@ function PanZoomProvider({
   forceMouseType,
   initialZoom = 1,
   initialPan = { x: 0, y: 0 },
-  boundPan = true,
-  boundPanPadding = { top: 0, right: 0, bottom: 0, left: 0 },
-  boundZoom = true,
+  isPanBounded = true,
+  panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
+  isZoomBounded = true,
   minZoom = 0.5,
   maxZoom = 2,
   zoomStrength = 0.005,
@@ -39,24 +39,26 @@ function PanZoomProvider({
   const [isPinching, setIsPinching] = useState(false)
   const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
 
-  const handlePan = useCallback((panDelta: Xy) => {
-    setPan(pan => {
-      const nextPan = {
-        x: pan.x - panDelta.x * zoom,
-        y: pan.y - panDelta.y * zoom,
-      }
+  const boundPan = useCallback((pan: Xy) => {
+    if (!isPanBounded) return pan
 
-      if (boundPan) {
-        nextPan.x = Math.min(boundPanPadding.left, Math.max(nextPan.x, -boundPanPadding.right + (wrapperRef.current?.clientWidth ?? 0) - (contentRef.current?.scrollWidth ?? 0)))
-        nextPan.y = Math.min(boundPanPadding.top, Math.max(nextPan.y, -boundPanPadding.bottom + (wrapperRef.current?.clientHeight ?? 0) - (contentRef.current?.scrollHeight ?? 0)))
-      }
-
-      return nextPan
-    })
+    return {
+      x: Math.min(panBoundPadding.left, Math.max(pan.x, -panBoundPadding.right + (wrapperRef.current?.clientWidth ?? 0) - (contentRef.current?.scrollWidth ?? 0))),
+      y: Math.min(panBoundPadding.top, Math.max(pan.y, -panBoundPadding.bottom + (wrapperRef.current?.clientHeight ?? 0) - (contentRef.current?.scrollHeight ?? 0))),
+    }
   }, [
-    boundPan,
-    boundPanPadding,
+    isPanBounded,
+    panBoundPadding,
+  ])
+
+  const handlePan = useCallback((panDelta: Xy) => {
+    setPan(pan => boundPan({
+      x: pan.x - panDelta.x * zoom,
+      y: pan.y - panDelta.y * zoom,
+    }))
+  }, [
     zoom,
+    boundPan,
   ])
 
   const handleZoom = useCallback((delta: number, origin: Xy) => {
@@ -64,30 +66,21 @@ function PanZoomProvider({
 
     let nextZoom = zoom * (1 - delta * zoomStrength)
 
-    if (boundZoom) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
+    if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
     setPan(pan => ({
-      x: (nextZoom / zoom) * (pan.x - origin.x) + origin.x,
-      y: (nextZoom / zoom) * (pan.y - origin.y) + origin.y,
+      x: pan.x - origin.x + origin.x * nextZoom / zoom,
+      y: pan.y - origin.y + origin.y * nextZoom / zoom,
     }))
 
-    // x: nextScale / scale * (position.x - fixedPoint.x) +
-    //        fixedPoint.x,
-    //     y: nextScale / scale * (position.y - fixedPoint.y) +
-    //        fixedPoint.y
-
     setZoom(nextZoom)
-
-    // setPan(pan => ({
-    //   x: pan.x + origin.x * (nextZoom - zoom),
-    //   y: pan.y + origin.y * (nextZoom - zoom),
-    // }))
   }, [
     zoomStrength,
-    boundZoom,
+    isZoomBounded,
     minZoom,
     maxZoom,
     zoom,
+    // boundPan,
   ])
 
   const handleDrag = useCallback((state: FullGestureState<'drag'>) => {
@@ -114,21 +107,23 @@ function PanZoomProvider({
   ])
 
   const handlePinch = useCallback((state: FullGestureState<'pinch'>) => {
-    console.log('pinch', state)
+    state.event.preventDefault()
+
+    console.log('pinch')
     const [direction] = state.direction
     const [distance] = state.distance
     const [originX, originY] = state.origin
 
     handleZoom(-direction * distance, {
-      x: -pan.x + originX,
-      y: -pan.y + originY,
+      x: originX,
+      y: originY,
     })
     setPoint({
-      x: -pan.x + originX,
-      y: -pan.y + originY,
+      x: originX,
+      y: originY,
     })
   }, [
-    pan,
+    // pan,
     handleZoom,
   ])
 
@@ -136,12 +131,20 @@ function PanZoomProvider({
     {
       onDrag: handleDrag,
       onWheel: handleWheel,
+    },
+    {
+      target: wrapperRef,
+    }
+  )
+
+  useGesture(
+    {
       onPinch: handlePinch,
       onPinchStart: () => setIsPinching(true),
       onPinchEnd: () => setIsPinching(false),
     },
     {
-      target: wrapperRef,
+      target: contentRef,
     }
   )
 

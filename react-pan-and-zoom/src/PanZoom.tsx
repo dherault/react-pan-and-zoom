@@ -32,6 +32,7 @@ function PanZoom({
         className={contentClassName}
         style={{
           ...contentStyle,
+          width: 'fit-content',
           position: 'relative',
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
         }}
