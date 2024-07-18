@@ -1,4 +1,4 @@
-import { type PropsWithChildren, useCallback, useMemo, useRef, useState } from 'react'
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { type FullGestureState, useGesture } from '@use-gesture/react'
 
@@ -26,7 +26,7 @@ function PanZoomProvider({
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   isZoomBounded = true,
-  minZoom = 0.5,
+  minZoom = 0.25,
   maxZoom = 2,
   zoomStrength = 0.005,
 }: Props) {
@@ -42,19 +42,25 @@ function PanZoomProvider({
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
 
+    const contentScrollX = contentRef.current?.scrollWidth ?? 0
+    const contentScrollY = contentRef.current?.scrollHeight ?? 0
+    const zoomFactor = (zoom - 1) / 2
+
     return {
-      x: Math.min(panBoundPadding.left, Math.max(pan.x, -panBoundPadding.right + (wrapperRef.current?.clientWidth ?? 0) - (contentRef.current?.scrollWidth ?? 0))),
-      y: Math.min(panBoundPadding.top, Math.max(pan.y, -panBoundPadding.bottom + (wrapperRef.current?.clientHeight ?? 0) - (contentRef.current?.scrollHeight ?? 0))),
+      x: Math.min(panBoundPadding.left + contentScrollX * zoomFactor, Math.max(pan.x, -panBoundPadding.right + (wrapperRef.current?.clientWidth ?? 0) - contentScrollX * (1 + zoomFactor))),
+      y: Math.min(panBoundPadding.top + contentScrollY * zoomFactor, Math.max(pan.y, -panBoundPadding.bottom + (wrapperRef.current?.clientHeight ?? 0) - contentScrollY * (1 + zoomFactor))),
     }
   }, [
     isPanBounded,
     panBoundPadding,
+    zoom,
   ])
 
+  console.log('pan', pan)
   const handlePan = useCallback((panDelta: Xy) => {
     setPan(pan => boundPan({
-      x: pan.x - panDelta.x * zoom,
-      y: pan.y - panDelta.y * zoom,
+      x: pan.x - panDelta.x / zoom,
+      y: pan.y - panDelta.y / zoom,
     }))
   }, [
     zoom,
@@ -62,16 +68,15 @@ function PanZoomProvider({
   ])
 
   const handleZoom = useCallback((delta: number, origin: Xy) => {
-    console.log('delta, origin', delta, origin)
-
     let nextZoom = zoom * (1 - delta * zoomStrength)
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
-    setPan(pan => ({
-      x: pan.x - origin.x + origin.x * nextZoom / zoom,
-      y: pan.y - origin.y + origin.y * nextZoom / zoom,
-    }))
+    console.log('nextZoom', nextZoom)
+    // setPan(pan => ({
+    //   x: pan.x + origin.x * (nextZoom - zoom),
+    //   y: pan.y + origin.y * (nextZoom - zoom),
+    // }))
 
     setZoom(nextZoom)
   }, [
@@ -107,23 +112,25 @@ function PanZoomProvider({
   ])
 
   const handlePinch = useCallback((state: FullGestureState<'pinch'>) => {
+    if (!wrapperRef.current) return
+
     state.event.preventDefault()
 
     console.log('pinch')
     const [direction] = state.direction
     const [distance] = state.distance
     const [originX, originY] = state.origin
+    const { top, left } = wrapperRef.current.getBoundingClientRect()
+    const origin = {
+      x: -(pan.x + originX - left) / zoom,
+      y: -(pan.y + originY - top) / zoom,
+    }
 
-    handleZoom(-direction * distance, {
-      x: originX,
-      y: originY,
-    })
-    setPoint({
-      x: originX,
-      y: originY,
-    })
+    handleZoom(-direction * distance, origin)
+    setPoint(origin)
   }, [
-    // pan,
+    pan,
+    zoom,
     handleZoom,
   ])
 
@@ -131,22 +138,20 @@ function PanZoomProvider({
     {
       onDrag: handleDrag,
       onWheel: handleWheel,
+      onPinch: handlePinch,
+      onPinchStart: () => setIsPinching(true),
+      onPinchEnd: () => setIsPinching(false),
     },
     {
       target: wrapperRef,
     }
   )
 
-  useGesture(
-    {
-      onPinch: handlePinch,
-      onPinchStart: () => setIsPinching(true),
-      onPinchEnd: () => setIsPinching(false),
-    },
-    {
-      target: contentRef,
-    }
-  )
+  // Initial pan bounding
+  useEffect(() => {
+    setTimeout(() => handlePan({ x: 0, y: 0 }), 2)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const panZoomContextValue = useMemo(() => ({
     mouseType,
