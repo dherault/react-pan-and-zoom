@@ -37,7 +37,7 @@ function PanZoom({
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
         }}
       >
-        <div style={{ position: 'absolute', top: point.y, left: point.x, backgroundColor: 'red', width: 4, height: 4 }} />
+        <div style={{ position: 'absolute', top: point.y, left: point.x, backgroundColor: 'red', width: 64, height: 64 }} />
         {children}
       </div>
     </div>

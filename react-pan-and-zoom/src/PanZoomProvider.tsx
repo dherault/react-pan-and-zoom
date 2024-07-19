@@ -21,12 +21,12 @@ type Props = PropsWithChildren<{
 function PanZoomProvider({
   children,
   forceMouseType,
-  initialZoom = 1,
+  initialZoom = 0.1,
   initialPan = { x: 0, y: 0 },
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   isZoomBounded = true,
-  minZoom = 0.25,
+  minZoom = 0.1,
   maxZoom = 2,
   zoomStrength = 0.005,
 }: Props) {
@@ -42,13 +42,27 @@ function PanZoomProvider({
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
 
+    const wrapperClientX = wrapperRef.current?.clientWidth ?? 0
+    const wrapperClientY = wrapperRef.current?.clientHeight ?? 0
     const contentScrollX = contentRef.current?.scrollWidth ?? 0
     const contentScrollY = contentRef.current?.scrollHeight ?? 0
     const zoomFactor = (zoom - 1) / 2
 
     return {
-      x: Math.min(panBoundPadding.left + contentScrollX * zoomFactor, Math.max(pan.x, -panBoundPadding.right + (wrapperRef.current?.clientWidth ?? 0) - contentScrollX * (1 + zoomFactor))),
-      y: Math.min(panBoundPadding.top + contentScrollY * zoomFactor, Math.max(pan.y, -panBoundPadding.bottom + (wrapperRef.current?.clientHeight ?? 0) - contentScrollY * (1 + zoomFactor))),
+      x: Math.min(
+        panBoundPadding.left + contentScrollX * zoomFactor,
+        Math.max(
+          pan.x,
+          -panBoundPadding.right + wrapperClientX - contentScrollX * (1 + zoomFactor),
+        )
+      ),
+      y: Math.min(
+        panBoundPadding.top + contentScrollY * zoomFactor,
+        Math.max(
+          pan.y,
+          -panBoundPadding.bottom + wrapperClientY - contentScrollY * (1 + zoomFactor)
+        )
+      ),
     }
   }, [
     isPanBounded,
@@ -56,14 +70,13 @@ function PanZoomProvider({
     zoom,
   ])
 
-  console.log('pan', pan)
+  console.log('pan zoom', pan, zoom)
   const handlePan = useCallback((panDelta: Xy) => {
     setPan(pan => boundPan({
-      x: pan.x - panDelta.x / zoom,
-      y: pan.y - panDelta.y / zoom,
+      x: pan.x - panDelta.x,
+      y: pan.y - panDelta.y,
     }))
   }, [
-    zoom,
     boundPan,
   ])
 
@@ -72,10 +85,9 @@ function PanZoomProvider({
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
-    console.log('nextZoom', nextZoom)
     // setPan(pan => ({
-    //   x: pan.x + origin.x * (nextZoom - zoom),
-    //   y: pan.y + origin.y * (nextZoom - zoom),
+    //   x: pan.x + origin.x * (nextZoom / zoom - 1),
+    //   y: pan.y + origin.y * (nextZoom / zoom - 1),
     // }))
 
     setZoom(nextZoom)
@@ -94,11 +106,9 @@ function PanZoomProvider({
 
   const handleWheel = useCallback((state: FullGestureState<'wheel'>) => {
     if (isPinching) return
-
-    console.log('wheel')
-    const isTouchpad = detectTouchpad(state.event)
-
-    if (!forceMouseType && mouseType !== 'touchscreen') setMouseType(isTouchpad ? 'touchpad' : 'mouse')
+    if (!forceMouseType && mouseType !== 'touchscreen') {
+      setMouseType(detectTouchpad(state.event) ? 'touchpad' : 'mouse')
+    }
 
     handlePan({
       x: state.delta[0],
@@ -149,7 +159,7 @@ function PanZoomProvider({
 
   // Initial pan bounding
   useEffect(() => {
-    setTimeout(() => handlePan({ x: 0, y: 0 }), 2)
+    setTimeout(() => handlePan({ x: 0, y: 0 }), 16 * 3)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
