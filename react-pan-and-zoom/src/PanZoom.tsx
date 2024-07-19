@@ -25,10 +25,10 @@ function PanZoom({
       style={{
         ...wrapperStyle,
         overflow: 'hidden',
-        position: 'relative',
+        position: 'relative', // TODO remove
       }}
     >
-      <div style={{ position: 'absolute', top: wrapperPoint.y - 8, left: wrapperPoint.x - 8, backgroundColor: 'blue', width: 16, height: 16, borderRadius: 99 }} />
+      <div style={{ position: 'absolute', top: wrapperPoint.y - 8, left: wrapperPoint.x - 8, backgroundColor: 'blue', width: 16, height: 16, borderRadius: 99, zIndex: 99 }} />
       <div
         ref={contentRef}
         className={contentClassName}
@@ -39,7 +39,7 @@ function PanZoom({
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
         }}
       >
-        <div style={{ position: 'absolute', top: point.y - 32, left: point.x - 32, backgroundColor: 'red', width: 64, height: 64, borderRadius: 99 }} />
+        <div style={{ position: 'absolute', top: point.y - 32, left: point.x - 32, backgroundColor: 'red', width: 64, height: 64, borderRadius: 99, zIndex: 99 }} />
         {children}
       </div>
     </div>

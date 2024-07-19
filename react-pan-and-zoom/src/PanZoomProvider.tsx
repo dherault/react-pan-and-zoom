@@ -144,25 +144,23 @@ function PanZoomProvider({
     console.log('pinch')
     const [direction] = state.direction
     const [distance] = state.distance
-    // const [originX, originY] = state.origin
-    // const { top, left } = wrapperRef.current.getBoundingClientRect()
+    const [originX, originY] = state.origin
+    const { top, left } = wrapperRef.current.getBoundingClientRect()
     const origin = {
-      x: -pan.x,
-      y: -pan.y,
+      x: originX - left,
+      y: originY - top,
     }
 
     setPoint(origin)
-    setWrapperPoint({
-      x: 0,
-      y: 0,
-    })
+    setWrapperPoint(origin)
 
     if (false) {
+      console.log('pan', pan, zoom)
       handleZoom(-direction * distance, origin)
     }
   }, [
     pan,
-    // zoom,
+    zoom,
     handleZoom,
   ])
 
