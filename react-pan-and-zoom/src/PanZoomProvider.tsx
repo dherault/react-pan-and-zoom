@@ -95,6 +95,9 @@ function PanZoomProvider({
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
+    if (false) {
+      console.log('origin', origin)
+    }
     // setPan(pan => ({
     //   x: pan.x + origin.x * (nextZoom / zoom - 1),
     //   y: pan.y + origin.y * (nextZoom / zoom - 1),
@@ -111,7 +114,7 @@ function PanZoomProvider({
   ])
 
   const handleDrag = useCallback((state: FullGestureState<'drag'>) => {
-    console.log('drag')
+    console.log('drag', state)
   }, [])
 
   const handleWheel = useCallback((state: FullGestureState<'wheel'>) => {
