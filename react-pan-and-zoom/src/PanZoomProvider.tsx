@@ -155,6 +155,11 @@ function PanZoomProvider({
     setWrapperPoint(origin)
 
     if (false) {
+      // const origin = {
+      //   x: originX - left,
+      //   y: originY - top,
+      // }
+
       console.log('pan', pan, zoom)
       handleZoom(-direction * distance, origin)
     }
