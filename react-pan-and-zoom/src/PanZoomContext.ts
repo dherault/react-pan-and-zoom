@@ -11,6 +11,7 @@ type PanZoomContext = {
   wrapperRef: RefObject<HTMLDivElement>
   contentRef: RefObject<HTMLDivElement>
   point: Xy
+  wrapperPoint: Xy
 }
 
 export default createContext<PanZoomContext>({
@@ -22,4 +23,5 @@ export default createContext<PanZoomContext>({
   wrapperRef: {} as RefObject<HTMLDivElement>,
   contentRef: {} as RefObject<HTMLDivElement>,
   point: { x: 0, y: 0 },
+  wrapperPoint: { x: 0, y: 0 },
 })

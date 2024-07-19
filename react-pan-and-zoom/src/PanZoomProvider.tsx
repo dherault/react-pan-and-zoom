@@ -38,6 +38,7 @@ function PanZoomProvider({
   const [pan, setPan] = useState(initialPan)
   const [isPinching, setIsPinching] = useState(false)
   const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
+  const [wrapperPoint, setWrapperPoint] = useState<Xy>({ x: 0, y: 0 })
   const [centered, setCentered] = useState(false)
 
   const boundPan = useCallback((pan: Xy) => {
@@ -80,7 +81,6 @@ function PanZoomProvider({
     centered,
   ])
 
-  console.log('pan zoom', pan, zoom)
   const handlePan = useCallback((panDelta: Xy) => {
     setPan(pan => boundPan({
       x: pan.x - panDelta.x,
@@ -144,18 +144,25 @@ function PanZoomProvider({
     console.log('pinch')
     const [direction] = state.direction
     const [distance] = state.distance
-    const [originX, originY] = state.origin
-    const { top, left } = wrapperRef.current.getBoundingClientRect()
+    // const [originX, originY] = state.origin
+    // const { top, left } = wrapperRef.current.getBoundingClientRect()
     const origin = {
-      x: -(pan.x + originX - left) / zoom,
-      y: -(pan.y + originY - top) / zoom,
+      x: -pan.x,
+      y: -pan.y,
     }
 
-    handleZoom(-direction * distance, origin)
     setPoint(origin)
+    setWrapperPoint({
+      x: 0,
+      y: 0,
+    })
+
+    if (false) {
+      handleZoom(-direction * distance, origin)
+    }
   }, [
     pan,
-    zoom,
+    // zoom,
     handleZoom,
   ])
 
@@ -183,6 +190,7 @@ function PanZoomProvider({
     zoom,
     pan,
     point,
+    wrapperPoint,
     setZoom,
     setPan,
     wrapperRef,
@@ -192,12 +200,25 @@ function PanZoomProvider({
     zoom,
     pan,
     point,
+    wrapperPoint,
     setZoom,
     setPan,
   ])
 
   return (
     <PanZoomContext.Provider value={panZoomContextValue}>
+      <pre style={{
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        width: 'fit-content',
+        padding: 16,
+      }}
+      >
+        {JSON.stringify(pan)}
+        {' - '}
+        {zoom}
+      </pre>
       {children}
     </PanZoomContext.Provider>
   )
