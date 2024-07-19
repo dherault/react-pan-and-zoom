@@ -21,13 +21,13 @@ type Props = PropsWithChildren<{
 function PanZoomProvider({
   children,
   forceMouseType,
-  initialZoom = 0.1,
+  initialZoom = 0.2,
   initialPan = { x: 0, y: 0 },
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   isZoomBounded = true,
-  minZoom = 0.1,
-  maxZoom = 2,
+  minZoom = 0.2,
+  maxZoom = 5,
   zoomStrength = 0.005,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -38,6 +38,7 @@ function PanZoomProvider({
   const [pan, setPan] = useState(initialPan)
   const [isPinching, setIsPinching] = useState(false)
   const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
+  const [centered, setCentered] = useState(false)
 
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
@@ -47,27 +48,36 @@ function PanZoomProvider({
     const contentScrollX = contentRef.current?.scrollWidth ?? 0
     const contentScrollY = contentRef.current?.scrollHeight ?? 0
     const zoomFactor = (zoom - 1) / 2
-
-    return {
-      x: Math.min(
-        panBoundPadding.left + contentScrollX * zoomFactor,
-        Math.max(
-          pan.x,
-          -panBoundPadding.right + wrapperClientX - contentScrollX * (1 + zoomFactor),
-        )
-      ),
-      y: Math.min(
-        panBoundPadding.top + contentScrollY * zoomFactor,
-        Math.max(
-          pan.y,
-          -panBoundPadding.bottom + wrapperClientY - contentScrollY * (1 + zoomFactor)
-        )
-      ),
+    const left = panBoundPadding.left + contentScrollX * zoomFactor
+    const right = -panBoundPadding.right + wrapperClientX - contentScrollX * (1 + zoomFactor)
+    const top = panBoundPadding.top + contentScrollY * zoomFactor
+    const bottom = -panBoundPadding.bottom + wrapperClientY - contentScrollY * (1 + zoomFactor)
+    const minX = Math.min(left, right)
+    const maxX = Math.max(left, right)
+    const minY = Math.min(top, bottom)
+    const maxY = Math.max(top, bottom)
+    const renderedContentWidth = contentScrollX * zoom
+    const renderedContentHeight = contentScrollY * zoom
+    const boundedPan = {
+      x: Math.max(minX, Math.min(pan.x, maxX)),
+      y: Math.max(minY, Math.min(pan.y, maxY)),
     }
+
+    if (!centered && renderedContentWidth < wrapperClientX) {
+      boundedPan.x -= (wrapperClientX - renderedContentWidth) / 2
+      setCentered(true)
+    }
+    if (!centered && renderedContentHeight < wrapperClientY) {
+      boundedPan.y -= (wrapperClientY - renderedContentHeight) / 2
+      setCentered(true)
+    }
+
+    return boundedPan
   }, [
     isPanBounded,
     panBoundPadding,
     zoom,
+    centered,
   ])
 
   console.log('pan zoom', pan, zoom)
@@ -109,6 +119,8 @@ function PanZoomProvider({
     if (!forceMouseType && mouseType !== 'touchscreen') {
       setMouseType(detectTouchpad(state.event) ? 'touchpad' : 'mouse')
     }
+
+    console.log('state.delta', state.delta)
 
     handlePan({
       x: state.delta[0],
