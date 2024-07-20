@@ -48,10 +48,9 @@ function PanZoomProvider({
     const wrapperClientY = wrapperRef.current?.clientHeight ?? 0
     const contentScrollX = contentRef.current?.scrollWidth ?? 0
     const contentScrollY = contentRef.current?.scrollHeight ?? 0
-    const zoomFactor = (zoom - 1) / 2
-    const left = panBoundPadding.left + contentScrollX * zoomFactor
+    const zoomFactor = (zoom - 1)
+    const { top, left } = panBoundPadding
     const right = -panBoundPadding.right + wrapperClientX - contentScrollX * (1 + zoomFactor)
-    const top = panBoundPadding.top + contentScrollY * zoomFactor
     const bottom = -panBoundPadding.bottom + wrapperClientY - contentScrollY * (1 + zoomFactor)
     const minX = Math.min(left, right)
     const maxX = Math.max(left, right)
@@ -65,11 +64,11 @@ function PanZoomProvider({
     }
 
     if (!centered && renderedContentWidth < wrapperClientX) {
-      boundedPan.x -= (wrapperClientX - renderedContentWidth) / 2
+      boundedPan.x += (wrapperClientX - renderedContentWidth) / 2
       setCentered(true)
     }
     if (!centered && renderedContentHeight < wrapperClientY) {
-      boundedPan.y -= (wrapperClientY - renderedContentHeight) / 2
+      boundedPan.y += (wrapperClientY - renderedContentHeight) / 2
       setCentered(true)
     }
 
@@ -123,8 +122,6 @@ function PanZoomProvider({
       setMouseType(detectTouchpad(state.event) ? 'touchpad' : 'mouse')
     }
 
-    console.log('state.delta', state.delta)
-
     handlePan({
       x: state.delta[0],
       y: state.delta[1],
@@ -151,8 +148,13 @@ function PanZoomProvider({
       y: originY - top,
     }
 
+    console.log('pan', pan)
+
     setPoint(origin)
-    setWrapperPoint(origin)
+    setWrapperPoint({
+      x: originX - left,
+      y: originY - top,
+    })
 
     if (false) {
       // const origin = {
