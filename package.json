@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "react-pan-and-zoom-monorepo",
   "description": "A React component to pan and zoom using a trackpad, mouse or touchscreen",
   "scripts": {

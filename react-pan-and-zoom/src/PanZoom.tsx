@@ -3,32 +3,32 @@ import { type CSSProperties, type PropsWithChildren } from 'react'
 import usePanZoom from './usePanZoom'
 
 type Props = PropsWithChildren<{
-  wrapperClassName?: string
-  wrapperStyle?: CSSProperties
+  containerClassName?: string
+  containerStyle?: CSSProperties
   contentClassName?: string
   contentStyle?: CSSProperties
 }>
 
 function PanZoom({
   children,
-  wrapperClassName = '',
-  wrapperStyle = {},
+  containerClassName = '',
+  containerStyle = {},
   contentClassName = '',
   contentStyle = {},
 }: Props) {
-  const { wrapperRef, contentRef, pan, zoom, point, wrapperPoint } = usePanZoom()
+  const { containerRef, contentRef, pan, zoom, point, containerPoint } = usePanZoom()
 
   return (
     <div
-      ref={wrapperRef}
-      className={wrapperClassName}
+      ref={containerRef}
+      className={containerClassName}
       style={{
-        ...wrapperStyle,
+        ...containerStyle,
         overflow: 'hidden',
         position: 'relative', // TODO remove
       }}
     >
-      <div style={{ position: 'absolute', top: wrapperPoint.y - 8, left: wrapperPoint.x - 8, backgroundColor: 'blue', width: 16, height: 16, borderRadius: 99, zIndex: 99 }} />
+      <div style={{ position: 'absolute', top: containerPoint.y - 8, left: containerPoint.x - 8, backgroundColor: 'blue', width: 16, height: 16, borderRadius: 99, zIndex: 99 }} />
       <div
         ref={contentRef}
         className={contentClassName}

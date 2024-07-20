@@ -24,10 +24,10 @@ type Props = PropsWithChildren<{
 function PanZoomProvider({
   children,
   forceMouseType,
-  initialZoom = 0.2,
   initialPan = { x: 0, y: 0 },
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
+  initialZoom = 1,
   isZoomBounded = true,
   minZoom = 0.2,
   maxZoom = 5,
@@ -35,7 +35,7 @@ function PanZoomProvider({
   minZoomStrength = -1.5,
   maxZoomStrength = 1.5,
 }: Props) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
 
   const [mouseType, setMouseType] = useState<MouseType>(forceMouseType ?? detectTouchscreen() ? 'touchscreen' : 'mouse')
@@ -43,7 +43,7 @@ function PanZoomProvider({
   const [pan, setPan] = useState(initialPan)
   const [isPinching, setIsPinching] = useState(false)
   const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
-  const [wrapperPoint, setWrapperPoint] = useState<Xy>({ x: 0, y: 0 })
+  const [containerPoint, setWrapperPoint] = useState<Xy>({ x: 0, y: 0 })
   const [centered, setCentered] = useState(false)
 
   // const lerpedPan = useLerp(pan)
@@ -53,14 +53,14 @@ function PanZoomProvider({
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
 
-    const wrapperClientX = wrapperRef.current?.clientWidth ?? 0
-    const wrapperClientY = wrapperRef.current?.clientHeight ?? 0
+    const containerClientX = containerRef.current?.clientWidth ?? 0
+    const containerClientY = containerRef.current?.clientHeight ?? 0
     const contentScrollX = contentRef.current?.scrollWidth ?? 0
     const contentScrollY = contentRef.current?.scrollHeight ?? 0
     const zoomFactor = (zoom - 1)
     const { top, left } = panBoundPadding
-    const right = -panBoundPadding.right + wrapperClientX - contentScrollX * (1 + zoomFactor)
-    const bottom = -panBoundPadding.bottom + wrapperClientY - contentScrollY * (1 + zoomFactor)
+    const right = -panBoundPadding.right + containerClientX - contentScrollX * (1 + zoomFactor)
+    const bottom = -panBoundPadding.bottom + containerClientY - contentScrollY * (1 + zoomFactor)
     const minX = Math.min(left, right)
     const maxX = Math.max(left, right)
     const minY = Math.min(top, bottom)
@@ -72,12 +72,12 @@ function PanZoomProvider({
       y: Math.max(minY, Math.min(pan.y, maxY)),
     }
 
-    if (!centered && renderedContentWidth < wrapperClientX) {
-      boundedPan.x += (wrapperClientX - renderedContentWidth) / 2
+    if (!centered && renderedContentWidth < containerClientX) {
+      boundedPan.x += (containerClientX - renderedContentWidth) / 2
       setCentered(true)
     }
-    if (!centered && renderedContentHeight < wrapperClientY) {
-      boundedPan.y += (wrapperClientY - renderedContentHeight) / 2
+    if (!centered && renderedContentHeight < containerClientY) {
+      boundedPan.y += (containerClientY - renderedContentHeight) / 2
       setCentered(true)
     }
 
@@ -143,14 +143,14 @@ function PanZoomProvider({
   ])
 
   const handlePinch = useCallback((state: FullGestureState<'pinch'>) => {
-    if (!wrapperRef.current) return
+    if (!containerRef.current) return
 
     state.event.preventDefault()
 
     const [direction] = state.direction
     const [distance] = state.distance
     const [originX, originY] = state.origin
-    const { top, left } = wrapperRef.current.getBoundingClientRect()
+    const { top, left } = containerRef.current.getBoundingClientRect()
 
     // KEEP
     const origin = {
@@ -181,7 +181,7 @@ function PanZoomProvider({
       onPinchEnd: () => setIsPinching(false),
     },
     {
-      target: wrapperRef,
+      target: containerRef,
     }
   )
 
@@ -196,17 +196,17 @@ function PanZoomProvider({
     zoom,
     pan,
     point,
-    wrapperPoint,
+    containerPoint,
     setZoom,
     setPan,
-    wrapperRef,
+    containerRef,
     contentRef,
   }), [
     mouseType,
     zoom,
     pan,
     point,
-    wrapperPoint,
+    containerPoint,
     setZoom,
     setPan,
   ])
