@@ -42,13 +42,7 @@ function PanZoomProvider({
   const [zoom, setZoom] = useState(initialZoom)
   const [pan, setPan] = useState(initialPan)
   const [isPinching, setIsPinching] = useState(false)
-  const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
-  const [containerPoint, setWrapperPoint] = useState<Xy>({ x: 0, y: 0 })
   const [centered, setCentered] = useState(false)
-
-  // const lerpedPan = useLerp(pan)
-
-  // console.log('lerpedPan', lerpedPan)
 
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
@@ -155,20 +149,10 @@ function PanZoomProvider({
     const [originX, originY] = state.origin
     const { top, left } = containerRef.current.getBoundingClientRect()
 
-    // KEEP
-    const origin = {
+    handleZoom(-direction * distance, {
       x: (originX - left - pan.x) / zoom,
       y: (originY - top - pan.y) / zoom,
-    }
-
-    // DISCARD
-    setPoint(origin)
-    setWrapperPoint({
-      x: originX - left,
-      y: originY - top,
     })
-
-    handleZoom(-direction * distance, origin)
   }, [
     pan,
     zoom,
@@ -190,7 +174,7 @@ function PanZoomProvider({
 
   // Initial pan bounding
   useEffect(() => {
-    setTimeout(() => handlePan({ x: 0, y: 0 }), 16 * 3)
+    setTimeout(() => handlePan({ x: 0, y: 0 }), 2)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -198,8 +182,6 @@ function PanZoomProvider({
     mouseType,
     zoom,
     pan,
-    point,
-    containerPoint,
     setZoom,
     setPan,
     containerRef,
@@ -208,8 +190,6 @@ function PanZoomProvider({
     mouseType,
     zoom,
     pan,
-    point,
-    containerPoint,
     setZoom,
     setPan,
   ])
