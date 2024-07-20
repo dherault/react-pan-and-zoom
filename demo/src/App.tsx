@@ -7,7 +7,7 @@ function App() {
         <h1>
           React pan and zoom
         </h1>
-        <PanZoom wrapperClassName="w-full grow">
+        <PanZoom containerClassName="w-full grow">
           <div className="grid grid-cols-2 w-[calc(3840px*2)]">
             <img src="/4k.jpg" />
             <img src="/4k.jpg" />
