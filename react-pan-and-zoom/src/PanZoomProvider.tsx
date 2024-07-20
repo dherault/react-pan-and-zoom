@@ -126,6 +126,8 @@ function PanZoomProvider({
   }, [])
 
   const handleWheel = useCallback((state: FullGestureState<'wheel'>) => {
+    state.event.stopPropagation()
+
     if (isPinching) return
     if (!forceMouseType && mouseType !== 'touchscreen') {
       setMouseType(detectTouchpad(state.event) ? 'touchpad' : 'mouse')
@@ -146,6 +148,7 @@ function PanZoomProvider({
     if (!containerRef.current) return
 
     state.event.preventDefault()
+    state.event.stopPropagation()
 
     const [direction] = state.direction
     const [distance] = state.distance
@@ -213,18 +216,6 @@ function PanZoomProvider({
 
   return (
     <PanZoomContext.Provider value={panZoomContextValue}>
-      <pre style={{
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        width: 'fit-content',
-        padding: 16,
-      }}
-      >
-        {JSON.stringify(pan)}
-        {' - '}
-        {zoom}
-      </pre>
       {children}
     </PanZoomContext.Provider>
   )
