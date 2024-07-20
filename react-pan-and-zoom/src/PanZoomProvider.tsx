@@ -5,6 +5,7 @@ import { type FullGestureState, useGesture } from '@use-gesture/react'
 import type { MouseType, Padding, Xy } from './types'
 import { detectTouchpad, detectTouchscreen } from './utils'
 import PanZoomContext from './PanZoomContext'
+// import useLerp from './useLerp'
 
 type Props = PropsWithChildren<{
   forceMouseType?: MouseType
@@ -16,6 +17,8 @@ type Props = PropsWithChildren<{
   minZoom?: number
   maxZoom?: number
   zoomStrength?: number
+  minZoomStrength?: number
+  maxZoomStrength?: number
 }>
 
 function PanZoomProvider({
@@ -28,7 +31,9 @@ function PanZoomProvider({
   isZoomBounded = true,
   minZoom = 0.2,
   maxZoom = 5,
-  zoomStrength = 0.005,
+  zoomStrength = 0.0333,
+  minZoomStrength = -1.5,
+  maxZoomStrength = 1.5,
 }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -40,6 +45,10 @@ function PanZoomProvider({
   const [point, setPoint] = useState<Xy>({ x: 0, y: 0 })
   const [wrapperPoint, setWrapperPoint] = useState<Xy>({ x: 0, y: 0 })
   const [centered, setCentered] = useState(false)
+
+  // const lerpedPan = useLerp(pan)
+
+  // console.log('lerpedPan', lerpedPan)
 
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
@@ -90,26 +99,27 @@ function PanZoomProvider({
   ])
 
   const handleZoom = useCallback((delta: number, origin: Xy) => {
-    let nextZoom = zoom * (1 - delta * zoomStrength)
+    const zoomFactor = Math.min(maxZoomStrength, Math.max(minZoomStrength, -delta)) * zoomStrength
+
+    let nextZoom = zoom * (1 + zoomFactor)
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
-    if (false) {
-      console.log('origin', origin)
-    }
-    // setPan(pan => ({
-    //   x: pan.x + origin.x * (nextZoom / zoom - 1),
-    //   y: pan.y + origin.y * (nextZoom / zoom - 1),
-    // }))
+    handlePan({
+      x: origin.x * (nextZoom - zoom),
+      y: origin.y * (nextZoom - zoom),
+    })
 
     setZoom(nextZoom)
   }, [
     zoomStrength,
+    minZoomStrength,
+    maxZoomStrength,
     isZoomBounded,
     minZoom,
     maxZoom,
     zoom,
-    // boundPan,
+    handlePan,
   ])
 
   const handleDrag = useCallback((state: FullGestureState<'drag'>) => {
@@ -138,33 +148,25 @@ function PanZoomProvider({
 
     state.event.preventDefault()
 
-    console.log('pinch')
     const [direction] = state.direction
     const [distance] = state.distance
     const [originX, originY] = state.origin
     const { top, left } = wrapperRef.current.getBoundingClientRect()
+
+    // KEEP
     const origin = {
-      x: originX - left,
-      y: originY - top,
+      x: (originX - left - pan.x) / zoom,
+      y: (originY - top - pan.y) / zoom,
     }
 
-    console.log('pan', pan)
-
+    // DISCARD
     setPoint(origin)
     setWrapperPoint({
       x: originX - left,
       y: originY - top,
     })
 
-    if (false) {
-      // const origin = {
-      //   x: originX - left,
-      //   y: originY - top,
-      // }
-
-      console.log('pan', pan, zoom)
-      handleZoom(-direction * distance, origin)
-    }
+    handleZoom(-direction * distance, origin)
   }, [
     pan,
     zoom,
