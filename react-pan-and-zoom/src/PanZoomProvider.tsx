@@ -17,8 +17,6 @@ type Props = PropsWithChildren<{
   minZoom?: number
   maxZoom?: number
   zoomStrength?: number
-  minZoomStrength?: number
-  maxZoomStrength?: number
 }>
 
 function PanZoomProvider({
@@ -31,9 +29,7 @@ function PanZoomProvider({
   isZoomBounded = true,
   minZoom = 0.2,
   maxZoom = 5,
-  zoomStrength = 0.0333,
-  minZoomStrength = -2,
-  maxZoomStrength = 2,
+  zoomStrength = 0.0666,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -93,9 +89,10 @@ function PanZoomProvider({
   ])
 
   const handleZoom = useCallback((delta: number, origin: Xy) => {
-    const zoomFactor = Math.min(maxZoomStrength, Math.max(minZoomStrength, -delta)) * zoomStrength
+    // let zoomFactor = Math.min(maxZoomStrength, Math.max(minZoomStrength, -delta)) * zoomStrength
+    // const zoomFactor = -Math.sign(delta) * zoomStrength
 
-    let nextZoom = zoom * (1 + zoomFactor)
+    let nextZoom = zoom * (1 - Math.sign(delta) * zoomStrength)
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
@@ -107,8 +104,6 @@ function PanZoomProvider({
     setZoom(nextZoom)
   }, [
     zoomStrength,
-    minZoomStrength,
-    maxZoomStrength,
     isZoomBounded,
     minZoom,
     maxZoom,
@@ -116,7 +111,9 @@ function PanZoomProvider({
   ])
 
   const handleDrag = useCallback((state: FullGestureState<'drag'>) => {
-    console.log('drag', state)
+    if (false) {
+      console.log('drag', state)
+    }
   }, [])
 
   const handleWheel = useCallback((state: FullGestureState<'wheel'>) => {
@@ -174,7 +171,7 @@ function PanZoomProvider({
 
   // Initial pan bounding
   useEffect(() => {
-    setTimeout(() => handlePan({ x: 0, y: 0 }), 2)
+    setTimeout(() => handlePan({ x: 0, y: 0 }), 17)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

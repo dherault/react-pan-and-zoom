@@ -43,9 +43,7 @@ function App() {
 | isZoomBounded | boolean | true | Whether to bound zooming |
 | minZoom | number | 0.2 | The minimum zoom value |
 | maxZoom | number | 5 | The maximum zoom value |
-| zoomStrength | number | 0.0333 | The strength factor of the zoom |
-| minZoomStrength | number | -2 | The minimum zoom strength |
-| maxZoomStrength | number | 2 | The maximum zoom strength  |
+| zoomStrength | number | 0.0666 | The strength factor of the zoom |
 
 ## PanZoom
 

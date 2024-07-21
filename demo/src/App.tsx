@@ -3,13 +3,8 @@ import { PanZoom, PanZoomProvider } from 'react-pan-and-zoom'
 function App() {
   return (
     <PanZoomProvider
-      initialZoom={0.25}
-      panBoundPadding={{
-        top: 256,
-        bottom: 256,
-        left: 64,
-        right: 64,
-      }}
+      minZoom={0.05}
+      initialZoom={0.05}
     >
       <div className="max-h-screen max-w-screen flex flex-col">
         <h1>
