@@ -32,8 +32,8 @@ function PanZoomProvider({
   minZoom = 0.2,
   maxZoom = 5,
   zoomStrength = 0.0333,
-  minZoomStrength = -1.5,
-  maxZoomStrength = 1.5,
+  minZoomStrength = -2,
+  maxZoomStrength = 2,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -51,10 +51,10 @@ function PanZoomProvider({
     const containerClientY = containerRef.current?.clientHeight ?? 0
     const contentScrollX = contentRef.current?.scrollWidth ?? 0
     const contentScrollY = contentRef.current?.scrollHeight ?? 0
-    const zoomFactor = (zoom - 1)
-    const { top, left } = panBoundPadding
-    const right = -panBoundPadding.right + containerClientX - contentScrollX * (1 + zoomFactor)
-    const bottom = -panBoundPadding.bottom + containerClientY - contentScrollY * (1 + zoomFactor)
+    const top = panBoundPadding.top * zoom
+    const bottom = -panBoundPadding.bottom * zoom + containerClientY - contentScrollY * zoom
+    const left = panBoundPadding.left * zoom
+    const right = -panBoundPadding.right * zoom + containerClientX - contentScrollX * zoom
     const minX = Math.min(left, right)
     const maxX = Math.max(left, right)
     const minY = Math.min(top, bottom)

@@ -44,8 +44,8 @@ function App() {
 | minZoom | number | 0.2 | The minimum zoom value |
 | maxZoom | number | 5 | The maximum zoom value |
 | zoomStrength | number | 0.0333 | The strength factor of the zoom |
-| minZoomStrength | number | -1.5 | The minimum zoom strength |
-| maxZoomStrength | number | 1.5 | The maximum zoom strength  |
+| minZoomStrength | number | -2 | The minimum zoom strength |
+| maxZoomStrength | number | 2 | The maximum zoom strength  |
 
 ## PanZoom
 
