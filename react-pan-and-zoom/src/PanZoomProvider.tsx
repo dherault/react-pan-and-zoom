@@ -17,6 +17,7 @@ type Props = PropsWithChildren<{
   minZoom?: number
   maxZoom?: number
   zoomStrength?: number
+  onChange?: (pan: Xy, zoom: number) => void
 }>
 
 function PanZoomProvider({
@@ -30,6 +31,7 @@ function PanZoomProvider({
   minZoom = 0.2,
   maxZoom = 5,
   zoomStrength = 0.0666,
+  onChange,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -174,6 +176,15 @@ function PanZoomProvider({
     setTimeout(() => handlePan({ x: 0, y: 0 }), 17)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Handle change
+  useEffect(() => {
+    onChange?.(pan, zoom)
+  }, [
+    pan,
+    zoom,
+    onChange,
+  ])
 
   const panZoomContextValue = useMemo(() => ({
     mouseType,

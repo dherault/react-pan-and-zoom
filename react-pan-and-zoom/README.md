@@ -44,6 +44,7 @@ function App() {
 | minZoom | number | 0.2 | The minimum zoom value |
 | maxZoom | number | 5 | The maximum zoom value |
 | zoomStrength | number | 0.0666 | The strength factor of the zoom |
+| onChange | (pan: Xy, zoom: number) => void | undefined | The callback when the pan or zoom changes |
 
 ## PanZoom
 
