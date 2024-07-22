@@ -18,6 +18,7 @@ function PersistedState() {
       initialPan={state.pan}
       initialZoom={state.zoom}
       onChange={handleChange}
+      centerOnMount={false}
     >
       <PanZoom containerClassName="grow">
         <div className="flex flex-col">

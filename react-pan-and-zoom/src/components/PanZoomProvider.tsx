@@ -81,11 +81,11 @@ function PanZoomProvider({
 
     if (shouldCenter && boundedPan.x === 0 && renderedContentWidth < containerClientX) {
       boundedPan.x += (containerClientX - renderedContentWidth) / 2
-      setShouldCenter(true)
+      setShouldCenter(false)
     }
     if (shouldCenter && boundedPan.y === 0 && renderedContentHeight < containerClientY) {
       boundedPan.y += (containerClientY - renderedContentHeight) / 2
-      setShouldCenter(true)
+      setShouldCenter(false)
     }
 
     return boundedPan
