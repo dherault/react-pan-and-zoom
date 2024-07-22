@@ -40,6 +40,7 @@ function App() {
 | isPanBounded | boolean | true | Whether to bound panning  |
 | panBoundPadding | Padding | { top: 0, bottom: 0, left: 0, right: 0 } | Padding for panning |
 | panZoomDelay | number | 300 | The delay in ms for the pan to adjust after a zoom |
+| centerOnMount | boolean | true | Whether to center on mount if the content is smaller than the container |
 | initialZoom | number | 1 | The initial zoom value |
 | isZoomBounded | boolean | true | Whether to bound zooming |
 | minZoom | number | 0.2 | The minimum zoom value |

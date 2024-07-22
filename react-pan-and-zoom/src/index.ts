@@ -1,5 +1,5 @@
-export { default as PanZoomProvider } from './PanZoomProvider'
+export { default as PanZoomProvider } from './components/PanZoomProvider'
 
-export { default as PanZoom } from './PanZoom'
+export { default as PanZoom } from './components/PanZoom'
 
-export { default as usePanZoom } from './usePanZoom'
+export { default as usePanZoom } from './hooks/usePanZoom'

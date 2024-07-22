@@ -1,6 +1,6 @@
 import { type Dispatch, type RefObject, type SetStateAction, createContext } from 'react'
 
-import type { MouseType, Xy } from './types'
+import type { MouseType, Xy } from '../types'
 
 type PanZoomContext = {
   mouseType: MouseType

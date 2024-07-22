@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import PanZoomContext from './PanZoomContext'
+import PanZoomContext from '../contexts/PanZoomContext'
 
 function usePanZoom() {
   return useContext(PanZoomContext)

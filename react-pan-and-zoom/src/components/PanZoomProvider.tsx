@@ -2,10 +2,10 @@ import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useSta
 
 import { type FullGestureState, useGesture } from '@use-gesture/react'
 
-import type { MouseType, Padding, Xy } from './types'
-import { detectTouchpad, detectTouchscreen } from './utils'
-import PanZoomContext from './PanZoomContext'
-import { ANIMATION_DURATION } from './constants'
+import type { MouseType, Padding, Xy } from '../types'
+import { ANIMATION_DURATION } from '../constants'
+import { detectTouchpad, detectTouchscreen } from '../utils'
+import PanZoomContext from '../contexts/PanZoomContext'
 
 type Props = PropsWithChildren<{
   forceMouseType?: MouseType
@@ -14,6 +14,7 @@ type Props = PropsWithChildren<{
   isPanBounded?: boolean
   panBoundPadding?: Padding
   panBoundDelay?: number
+  centerOnMount?: boolean
   isZoomBounded?: boolean
   minZoom?: number
   maxZoom?: number
@@ -31,6 +32,7 @@ function PanZoomProvider({
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   panBoundDelay = 300,
+  centerOnMount = true,
   initialZoom = 1,
   isZoomBounded = true,
   minZoom = 0.2,
@@ -45,7 +47,7 @@ function PanZoomProvider({
   const [zoom, setZoom] = useState(initialZoom)
   const [pan, setPan] = useState(initialPan)
   const [isPinching, setIsPinching] = useState(false)
-  const [centered, setCentered] = useState(false)
+  const [shouldCenter, setShouldCenter] = useState(centerOnMount)
   const [animated, setAnimated] = useState(false)
 
   const resetAnimation = useCallback(() => {
@@ -77,13 +79,13 @@ function PanZoomProvider({
       y: Math.max(minY, Math.min(pan.y, maxY)),
     }
 
-    if (!centered && renderedContentWidth < containerClientX) {
+    if (shouldCenter && boundedPan.x === 0 && renderedContentWidth < containerClientX) {
       boundedPan.x += (containerClientX - renderedContentWidth) / 2
-      setCentered(true)
+      setShouldCenter(true)
     }
-    if (!centered && renderedContentHeight < containerClientY) {
+    if (shouldCenter && boundedPan.y === 0 && renderedContentHeight < containerClientY) {
       boundedPan.y += (containerClientY - renderedContentHeight) / 2
-      setCentered(true)
+      setShouldCenter(true)
     }
 
     return boundedPan
@@ -91,7 +93,7 @@ function PanZoomProvider({
     isPanBounded,
     panBoundPadding,
     zoom,
-    centered,
+    shouldCenter,
   ])
 
   const handlePan = useCallback((panDelta: Xy) => {
@@ -222,7 +224,10 @@ function PanZoomProvider({
 
   // Initial pan bounding
   useEffect(() => {
-    setTimeout(() => handlePan({ x: 0, y: 0 }), 17)
+    setTimeout(() => {
+      handlePan({ x: 0, y: 0 })
+      setShouldCenter(false)
+    }, 1000 / 60)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -234,10 +239,6 @@ function PanZoomProvider({
     zoom,
     onChange,
   ])
-
-  useEffect(() => {
-
-  }, [])
 
   const panZoomContextValue = useMemo(() => ({
     mouseType,
