@@ -10,6 +10,7 @@ type PanZoomContext = {
   setPan: Dispatch<SetStateAction<Xy>>
   containerRef: RefObject<HTMLDivElement>
   contentRef: RefObject<HTMLDivElement>
+  animated: boolean
 }
 
 export default createContext<PanZoomContext>({
@@ -20,4 +21,5 @@ export default createContext<PanZoomContext>({
   setPan: () => {},
   containerRef: {} as RefObject<HTMLDivElement>,
   contentRef: {} as RefObject<HTMLDivElement>,
+  animated: false,
 })

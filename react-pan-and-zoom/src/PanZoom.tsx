@@ -1,5 +1,6 @@
 import { type CSSProperties, type PropsWithChildren } from 'react'
 
+import { ANIMATION_DURATION } from './constants'
 import usePanZoom from './usePanZoom'
 
 type Props = PropsWithChildren<{
@@ -16,7 +17,7 @@ function PanZoom({
   contentClassName = '',
   contentStyle = {},
 }: Props) {
-  const { containerRef, contentRef, pan, zoom } = usePanZoom()
+  const { containerRef, contentRef, pan, zoom, animated } = usePanZoom()
 
   return (
     <div
@@ -25,7 +26,7 @@ function PanZoom({
       style={{
         ...containerStyle,
         overflow: 'hidden',
-        position: 'relative', // TODO remove
+        touchAction: 'none',
       }}
     >
       <div
@@ -34,9 +35,9 @@ function PanZoom({
         style={{
           ...contentStyle,
           width: 'fit-content',
-          position: 'relative',
           transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
           transformOrigin: '0 0',
+          transition: animated ? `transform ${ANIMATION_DURATION}ms ease-in-out` : undefined,
         }}
       >
         {children}

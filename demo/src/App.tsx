@@ -4,7 +4,7 @@ function App() {
   return (
     <PanZoomProvider
       minZoom={0.05}
-      initialZoom={0.05}
+      initialZoom={0.25}
     >
       <div className="max-h-screen max-w-screen flex flex-col">
         <h1>
