@@ -178,14 +178,6 @@ function PanZoomProvider({
     handlePan,
   ])
 
-  const handleWheelStart = useCallback(() => {
-    // setAnimated(false)
-  }, [])
-
-  const handleWheelEnd = useCallback(() => {
-    // setAnimated(true)
-  }, [])
-
   const handlePinch = useCallback((state: FullGestureState<'pinch'>) => {
     if (!containerRef.current) return
 
@@ -209,20 +201,16 @@ function PanZoomProvider({
 
   const handlePinchStart = useCallback(() => {
     setIsPinching(true)
-    // setAnimated(false)
   }, [])
 
   const handlePinchEnd = useCallback(() => {
     setIsPinching(false)
-    // setAnimated(true)
   }, [])
 
   useGesture(
     {
       onDrag: handleDrag,
       onWheel: handleWheel,
-      onWheelStart: handleWheelStart,
-      onWheelEnd: handleWheelEnd,
       onPinch: handlePinch,
       onPinchStart: handlePinchStart,
       onPinchEnd: handlePinchEnd,
