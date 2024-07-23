@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 vite.config.ts.*
+.firebase
