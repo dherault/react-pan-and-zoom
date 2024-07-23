@@ -2,10 +2,13 @@
 
 A React component to pan and zoom using a trackpad, mouse or touchscreen.
 
+## Demo
+
+[Demo](https://react-pan-and-zoom.web.app/).
+
 ## Introduction
 
-I couldn't find a pan and zoom component that handles trackpads, mouses and touchscreens. So I made one.
-It differs from other packages in that it detects the mouse type and using a trackpad you can pan with two fingers and zoom with a pinch.
+This package differs from other packages in that it detects the mouse type and using a trackpad you can pan with two fingers and zoom with a pinch.
 
 ## Installation
 
@@ -45,8 +48,8 @@ You can also import a hook called `usePanZoom` to access the pan and zoom state 
 | centerOnMount | boolean | true | Whether to center on mount if the content is smaller than the container |
 | initialZoom | number | 1 | The initial zoom value |
 | isZoomBounded | boolean | true | Whether to bound zooming |
-| minZoom | number | 0.2 | The minimum zoom value |
-| maxZoom | number | 5 | The maximum zoom value |
+| minZoom | number | 0.5 | The minimum zoom value |
+| maxZoom | number | 2 | The maximum zoom value |
 | zoomStrength | number | 0.05 | The strength factor of the zoom |
 | onChange | (pan: Xy, zoom: number) => void | undefined | The callback when the pan or zoom changes |
 

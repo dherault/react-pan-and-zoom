@@ -8,10 +8,22 @@ function FourK() {
     >
       <PanZoom containerClassName="grow">
         <div className="grid grid-cols-2 w-[calc(3840px*2)]">
-          <img src="/4k.jpg" />
-          <img src="/4k.jpg" />
-          <img src="/4k.jpg" />
-          <img src="/4k.jpg" />
+          <img
+            src="/4k.jpg"
+            draggable={false}
+          />
+          <img
+            src="/4k.jpg"
+            draggable={false}
+          />
+          <img
+            src="/4k.jpg"
+            draggable={false}
+          />
+          <img
+            src="/4k.jpg"
+            draggable={false}
+          />
         </div>
       </PanZoom>
     </PanZoomProvider>

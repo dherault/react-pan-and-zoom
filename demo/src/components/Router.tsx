@@ -2,7 +2,8 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom
 
 import Layout from './Layout'
 import FourK from './FourK'
-import Dom from './PersistedState'
+import PersistedState from './PersistedState'
+import PanPadding from './PanPadding'
 
 function Router() {
   return (
@@ -31,7 +32,11 @@ function Router() {
           />
           <Route
             path="persisted-state"
-            element={<Dom />}
+            element={<PersistedState />}
+          />
+          <Route
+            path="pan-padding"
+            element={<PanPadding />}
           />
           <Route
             path="*"

@@ -1,8 +1,10 @@
 export function detectTouchpad(event: any) {
   let isTouchpad = false
 
-  if (event.wheelDeltaY && event.wheelDeltaY === event.deltaY * -3) {
-    isTouchpad = true
+  if (event.wheelDeltaY) {
+    if (event.wheelDeltaY === event.deltaY * -3) {
+      isTouchpad = true
+    }
   }
   else if (event.deltaMode === 0) {
     isTouchpad = true

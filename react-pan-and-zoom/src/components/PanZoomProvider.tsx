@@ -25,6 +25,9 @@ type Props = PropsWithChildren<{
 let panBoundAnimationStartTimeout: NodeJS.Timeout | null = null
 let panBoundAnimationEndTimeout: NodeJS.Timeout | null = null
 
+const mouseDetection: MouseType[] = []
+const MAX_MOUSE_DETECTION = 16
+
 function PanZoomProvider({
   children,
   forceMouseType,
@@ -35,8 +38,8 @@ function PanZoomProvider({
   centerOnMount = true,
   initialZoom = 1,
   isZoomBounded = true,
-  minZoom = 0.2,
-  maxZoom = 5,
+  minZoom = 0.5,
+  maxZoom = 2,
   zoomStrength = 0.05,
   onChange,
 }: Props) {
@@ -56,6 +59,25 @@ function PanZoomProvider({
 
     setAnimated(false)
   }, [])
+
+  const detectMouseType = useCallback((event: any) => {
+    if (forceMouseType || mouseType === 'touchscreen') return
+
+    if (mouseDetection.length > MAX_MOUSE_DETECTION) mouseDetection.shift()
+
+    mouseDetection.push(detectTouchpad(event) ? 'touchpad' : 'mouse')
+
+    const touchpadCount = mouseDetection.filter(type => type === 'touchpad').length
+    const mouseCount = mouseDetection.filter(type => type === 'mouse').length
+    const nextMouseType = touchpadCount > mouseCount ? 'touchpad' : 'mouse'
+
+    setMouseType(nextMouseType)
+
+    return nextMouseType
+  }, [
+    forceMouseType,
+    mouseType,
+  ])
 
   const boundPan = useCallback((pan: Xy) => {
     if (!isPanBounded) return pan
@@ -79,12 +101,12 @@ function PanZoomProvider({
       y: Math.max(minY, Math.min(pan.y, maxY)),
     }
 
-    if (shouldCenter && boundedPan.x === 0 && renderedContentWidth < containerClientX) {
-      boundedPan.x += (containerClientX - renderedContentWidth) / 2
+    if (shouldCenter && boundedPan.x === left && renderedContentWidth < containerClientX) {
+      boundedPan.x += (containerClientX - renderedContentWidth) / 2 - left
       setShouldCenter(false)
     }
-    if (shouldCenter && boundedPan.y === 0 && renderedContentHeight < containerClientY) {
-      boundedPan.y += (containerClientY - renderedContentHeight) / 2
+    if (shouldCenter && boundedPan.y === top && renderedContentHeight < containerClientY) {
+      boundedPan.y += (containerClientY - renderedContentHeight) / 2 - top
       setShouldCenter(false)
     }
 
@@ -156,28 +178,46 @@ function PanZoomProvider({
   ])
 
   const handleDrag = useCallback((state: FullGestureState<'drag'>) => {
-    if (false) {
-      console.log('drag', state)
-    }
-  }, [])
+    if (mouseType === 'touchpad') return
+
+    handlePan({
+      x: -state.delta[0],
+      y: -state.delta[1],
+    })
+  }, [
+    mouseType,
+    handlePan,
+  ])
 
   const handleWheel = useCallback((state: FullGestureState<'wheel'>) => {
     state.event.stopPropagation()
 
     if (isPinching) return
-    if (!forceMouseType && mouseType !== 'touchscreen') {
-      setMouseType(detectTouchpad(state.event) ? 'touchpad' : 'mouse')
-    }
+    if (!containerRef.current) return
 
-    handlePan({
-      x: state.delta[0],
-      y: state.delta[1],
-    })
+    const nextMouseType = detectMouseType(state.event)
+
+    if (nextMouseType === 'touchpad') {
+      handlePan({
+        x: state.delta[0],
+        y: state.delta[1],
+      })
+    }
+    else if (nextMouseType === 'mouse') {
+      const { top, left } = containerRef.current.getBoundingClientRect()
+
+      handleZoom(state.delta[1], {
+        x: (state.event.clientX - left - pan.x) / zoom,
+        y: (state.event.clientY - top - pan.y) / zoom,
+      })
+    }
   }, [
-    forceMouseType,
+    pan,
+    zoom,
     isPinching,
-    mouseType,
     handlePan,
+    handleZoom,
+    detectMouseType,
   ])
 
   const handlePinch = useCallback((state: FullGestureState<'pinch'>) => {

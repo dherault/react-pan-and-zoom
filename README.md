@@ -45,8 +45,8 @@ You can also import a hook called `usePanZoom` to access the pan and zoom state 
 | centerOnMount | boolean | true | Whether to center on mount if the content is smaller than the container |
 | initialZoom | number | 1 | The initial zoom value |
 | isZoomBounded | boolean | true | Whether to bound zooming |
-| minZoom | number | 0.2 | The minimum zoom value |
-| maxZoom | number | 5 | The maximum zoom value |
+| minZoom | number | 0.5 | The minimum zoom value |
+| maxZoom | number | 2 | The maximum zoom value |
 | zoomStrength | number | 0.05 | The strength factor of the zoom |
 | onChange | (pan: Xy, zoom: number) => void | undefined | The callback when the pan or zoom changes |
 

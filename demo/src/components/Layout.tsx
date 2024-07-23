@@ -20,6 +20,12 @@ function Layout({ children }: PropsWithChildren) {
         >
           Persisted state
         </Link>
+        <Link
+          to="/pan-padding"
+          className="text-blue-500 hover:underline"
+        >
+          Pan padding
+        </Link>
       </div>
       {children}
     </div>

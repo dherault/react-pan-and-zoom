@@ -21,7 +21,7 @@ function PersistedState() {
       centerOnMount={false}
     >
       <PanZoom containerClassName="grow">
-        <div className="flex flex-col">
+        <div className="flex flex-col select-none">
           <div className="h-32 w-32 bg-blue-500 rounded self-end" />
           <h1 className="mt-8 text-4xl font-bold">
             React pan and zoom
