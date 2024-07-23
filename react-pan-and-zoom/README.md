@@ -29,6 +29,8 @@ function App() {
 }
 ```
 
+You can also import a hook called `usePanZoom` to access the pan and zoom state inside `PanZoomProvider`.
+
 ## Props
 
 ### PanZoomProvider
