@@ -31,12 +31,12 @@ const MAX_MOUSE_DETECTION = 16
 function PanZoomProvider({
   children,
   forceMouseType,
-  initialPan = { x: 0, y: 0 },
+  initialPan,
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   panBoundDelay = 300,
   centerOnMount = true,
-  initialZoom = 1,
+  initialZoom,
   isZoomBounded = true,
   minZoom = 0.5,
   maxZoom = 2,
@@ -47,8 +47,8 @@ function PanZoomProvider({
   const contentRef = useRef<HTMLDivElement>(null)
 
   const [mouseType, setMouseType] = useState<MouseType>(forceMouseType ?? detectTouchscreen() ? 'touchscreen' : 'mouse')
-  const [zoom, setZoom] = useState(initialZoom)
-  const [pan, setPan] = useState(initialPan)
+  const [pan, setPan] = useState(initialPan ?? { x: 0, y: 0 },)
+  const [zoom, setZoom] = useState(initialZoom ?? 1)
   const [isPinching, setIsPinching] = useState(false)
   const [shouldCenter, setShouldCenter] = useState(centerOnMount)
   const [animated, setAnimated] = useState(false)
@@ -101,17 +101,20 @@ function PanZoomProvider({
       y: Math.max(minY, Math.min(pan.y, maxY)),
     }
 
-    if (shouldCenter && boundedPan.x === left && renderedContentWidth < containerClientX) {
-      boundedPan.x += (containerClientX - renderedContentWidth) / 2 - left
-      setShouldCenter(false)
-    }
-    if (shouldCenter && boundedPan.y === top && renderedContentHeight < containerClientY) {
-      boundedPan.y += (containerClientY - renderedContentHeight) / 2 - top
-      setShouldCenter(false)
+    if (typeof initialPan === 'undefined') {
+      if (shouldCenter && boundedPan.x === left && renderedContentWidth < containerClientX) {
+        boundedPan.x += (containerClientX - renderedContentWidth) / 2 - left
+        setShouldCenter(false)
+      }
+      if (shouldCenter && boundedPan.y === top && renderedContentHeight < containerClientY) {
+        boundedPan.y += (containerClientY - renderedContentHeight) / 2 - top
+        setShouldCenter(false)
+      }
     }
 
     return boundedPan
   }, [
+    initialPan,
     isPanBounded,
     panBoundPadding,
     zoom,
