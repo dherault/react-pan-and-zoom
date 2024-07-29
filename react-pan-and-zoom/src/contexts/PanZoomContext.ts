@@ -10,8 +10,8 @@ export type PanZoomContextType = {
   contentRef: RefObject<HTMLDivElement>
   zoomIn: (intensity?: number) => void
   zoomOut: (intensity?: number) => void
-  setZoom: () => void
-  setPan: () => void
+  setZoom: (zoom?: number) => void
+  setPan: (pan?: Xy) => void
 }
 
 export default createContext<PanZoomContextType>({
