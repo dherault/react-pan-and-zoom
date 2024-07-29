@@ -17,7 +17,7 @@ function Controls() {
 }
 
 function ControlsActions() {
-  const { setPan, setZoom, zoomIn, zoomOut } = usePanZoom()
+  const { resetPanZoom, zoomIn, zoomOut } = usePanZoom()
 
   return (
     <div
@@ -40,10 +40,7 @@ function ControlsActions() {
       <button
         type="button"
         className="flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-50 h-10 px-4 py-2"
-        onClick={() => {
-          setPan()
-          setZoom()
-        }}
+        onClick={() => resetPanZoom()}
       >
         Reset
       </button>

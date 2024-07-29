@@ -12,6 +12,7 @@ export type PanZoomContextType = {
   zoomOut: (intensity?: number) => void
   setZoom: (zoom?: number) => void
   setPan: (pan?: Xy) => void
+  resetPanZoom: () => void
 }
 
 export default createContext<PanZoomContextType>({
@@ -24,4 +25,5 @@ export default createContext<PanZoomContextType>({
   zoomOut: () => {},
   setZoom: () => {},
   setPan: () => {},
+  resetPanZoom: () => {},
 })
