@@ -1,7 +1,7 @@
 {
   "name": "react-pan-and-zoom",
   "description": "A React component to pan and zoom using a trackpad, mouse or touchscreen",
-  "version": "1.3.2",
+  "version": "2.0.0",
   "type": "module",
   "files": [
     "dist"
