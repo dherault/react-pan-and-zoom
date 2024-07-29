@@ -6,7 +6,6 @@ import usePersistedState from '../hooks/usePersistedState'
 function PersistedState() {
   const [state, setState] = usePersistedState('state', { pan: { x: 0, y: 0 }, zoom: 1 })
 
-  console.log('state', JSON.stringify(state, null, 2))
   const handleChange = useCallback((pan: { x: number, y: number }, zoom: number) => {
     setState({ pan, zoom })
   }, [

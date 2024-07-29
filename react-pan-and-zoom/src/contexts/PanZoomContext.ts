@@ -2,7 +2,7 @@ import { type Dispatch, type RefObject, type SetStateAction, createContext } fro
 
 import type { MouseType, Xy } from '../types'
 
-type PanZoomContext = {
+export type PanZoomContextType = {
   mouseType: MouseType
   zoom: number
   pan: Xy
@@ -10,10 +10,13 @@ type PanZoomContext = {
   setPan: Dispatch<SetStateAction<Xy>>
   containerRef: RefObject<HTMLDivElement>
   contentRef: RefObject<HTMLDivElement>
-  animated: boolean
+  zoomIn: (intentsity?: number) => void
+  zoomOut: (intentsity?: number) => void
+  resetZoom: () => void
+  resetPan: () => void
 }
 
-export default createContext<PanZoomContext>({
+export default createContext<PanZoomContextType>({
   mouseType: 'mouse',
   zoom: 1,
   pan: { x: 0, y: 0 },
@@ -21,5 +24,8 @@ export default createContext<PanZoomContext>({
   setPan: () => {},
   containerRef: {} as RefObject<HTMLDivElement>,
   contentRef: {} as RefObject<HTMLDivElement>,
-  animated: false,
+  zoomIn: () => {},
+  zoomOut: () => {},
+  resetZoom: () => {},
+  resetPan: () => {},
 })
