@@ -26,6 +26,12 @@ function Layout({ children }: PropsWithChildren) {
         >
           Pan padding
         </Link>
+        <Link
+          to="/controls"
+          className="text-blue-500 hover:underline"
+        >
+          Controls
+        </Link>
       </div>
       {children}
     </div>

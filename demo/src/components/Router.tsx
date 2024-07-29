@@ -4,6 +4,7 @@ import Layout from './Layout'
 import FourK from './FourK'
 import PersistedState from './PersistedState'
 import PanPadding from './PanPadding'
+import Controls from './Controls'
 
 function Router() {
   return (
@@ -37,6 +38,10 @@ function Router() {
           <Route
             path="pan-padding"
             element={<PanPadding />}
+          />
+          <Route
+            path="controls"
+            element={<Controls />}
           />
           <Route
             path="*"
