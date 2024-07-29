@@ -35,21 +35,19 @@
     "preview": "vite preview",
     "prepublishOnly": "npm run build"
   },
+  "dependencies": {
+    "@use-gesture/react": "^10.3.1"
+  },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^8.57.0",
-    "eslint-config-dherault-typescript": "^1.3.6",
     "nodemon": "^3.1.4",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.4",
-    "vite-plugin-dts": "^4.0.0-beta.0"
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
+    "vite-plugin-dts": "^4.0.0-beta.1"
   },
   "peerDependencies": {
-    "react": "^18.x.x",
-    "react-dom": "^18.x.x"
-  },
-  "dependencies": {
-    "@use-gesture/react": "^10.3.1"
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
