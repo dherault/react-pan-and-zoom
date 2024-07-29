@@ -147,13 +147,13 @@ function PanZoomProvider({
     boundPan,
   ])
 
-  const handleZoom = useCallback((delta: number, origin: Xy, strength = zoomStrength) => {
+  const handleZoom = useCallback((delta: number, origin: Xy, value?: number) => {
     if (panAnimated) return
 
     resetPanAnimation()
     // let zoomFactor = Math.min(maxZoomStrength, Math.max(minZoomStrength, -delta)) * zoomStrength
     // const zoomFactor = -Math.sign(delta) * zoomStrength
-    let nextZoom = zoom * (1 - Math.sign(delta) * strength)
+    let nextZoom = value ?? zoom * (1 - Math.sign(delta) * zoomStrength)
 
     if (isZoomBounded) nextZoom = Math.min(maxZoom, Math.max(minZoom, nextZoom))
 
@@ -263,48 +263,6 @@ function PanZoomProvider({
     setIsPinching(false)
   }, [])
 
-  const handleZoomInOrOut = useCallback((direction: number) => (intensity = 0.25) => {
-    resetZoomAnimation()
-    setZoomAnimated(true)
-
-    zoomAnimationStartTimeout = setTimeout(() => {
-      if (!containerRef.current) return
-
-      const { top, left, width, height } = containerRef.current.getBoundingClientRect()
-      const origin = {
-        x: (width / 2 - left - pan.x) / zoom,
-        y: (height / 2 - top - pan.y) / zoom,
-      }
-
-      handleZoom(direction, origin, intensity)
-
-      zoomAnimationEndTimeout = setTimeout(() => {
-        setZoomAnimated(false)
-      }, ANIMATION_DURATION)
-    }, 2)
-  }, [
-    pan,
-    zoom,
-    handleZoom,
-    resetZoomAnimation,
-  ])
-
-  const handleSetZoom = useCallback((zoom = initialZoom ?? 1) => {
-    resetZoomAnimation()
-    setZoomAnimated(true)
-
-    zoomAnimationStartTimeout = setTimeout(() => {
-      setZoom(zoom)
-
-      zoomAnimationEndTimeout = setTimeout(() => {
-        setZoomAnimated(false)
-      }, ANIMATION_DURATION)
-    }, 2)
-  }, [
-    initialZoom,
-    resetZoomAnimation,
-  ])
-
   const handleSetPan = useCallback((pan = initialPan ?? { x: 0, y: 0 }) => {
     resetPanAnimation()
     setPanAnimated(true)
@@ -319,6 +277,33 @@ function PanZoomProvider({
   }, [
     initialPan,
     resetPanAnimation,
+  ])
+
+  const handleSetZoom = useCallback((value = initialZoom ?? 1) => {
+    resetZoomAnimation()
+    setZoomAnimated(true)
+
+    zoomAnimationStartTimeout = setTimeout(() => {
+      if (!containerRef.current) return
+
+      const { top, left, width, height } = containerRef.current.getBoundingClientRect()
+      const origin = {
+        x: (width / 2 - left - pan.x) / zoom,
+        y: (height / 2 - top - pan.y) / zoom,
+      }
+
+      handleZoom(1, origin, value)
+
+      zoomAnimationEndTimeout = setTimeout(() => {
+        setZoomAnimated(false)
+      }, ANIMATION_DURATION)
+    }, 2)
+  }, [
+    pan,
+    zoom,
+    initialZoom,
+    handleZoom,
+    resetZoomAnimation,
   ])
 
   useGesture(
@@ -355,21 +340,20 @@ function PanZoomProvider({
 
   const panZoomContextValue = useMemo<PanZoomContextType>(() => ({
     mouseType,
-    zoom,
     pan,
+    zoom,
     containerRef,
     contentRef,
-    zoomIn: handleZoomInOrOut(-1),
-    zoomOut: handleZoomInOrOut(1),
-    setZoom: handleSetZoom,
     setPan: handleSetPan,
+    setZoom: handleSetZoom,
+    zoomIn: () => handleSetZoom(zoom + 0.25),
+    zoomOut: () => handleSetZoom(zoom - 0.25),
   }), [
     mouseType,
-    zoom,
     pan,
-    handleZoomInOrOut,
-    handleSetZoom,
+    zoom,
     handleSetPan,
+    handleSetZoom,
   ])
 
   const panZoomContextExtraValue = useMemo<PanZoomExtraContextType>(() => ({

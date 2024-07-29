@@ -4,8 +4,8 @@ import type { MouseType, Xy } from '../types'
 
 export type PanZoomContextType = {
   mouseType: MouseType
-  zoom: number
   pan: Xy
+  zoom: number
   containerRef: RefObject<HTMLDivElement>
   contentRef: RefObject<HTMLDivElement>
   zoomIn: (intensity?: number) => void
@@ -16,8 +16,8 @@ export type PanZoomContextType = {
 
 export default createContext<PanZoomContextType>({
   mouseType: 'mouse',
-  zoom: 1,
   pan: { x: 0, y: 0 },
+  zoom: 1,
   containerRef: {} as RefObject<HTMLDivElement>,
   contentRef: {} as RefObject<HTMLDivElement>,
   zoomIn: () => {},
