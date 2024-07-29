@@ -289,12 +289,12 @@ function PanZoomProvider({
     resetZoomAnimation,
   ])
 
-  const handleResetZoom = useCallback(() => {
+  const handleSetZoom = useCallback((zoom = initialZoom ?? 1) => {
     resetZoomAnimation()
     setZoomAnimated(true)
 
     zoomAnimationStartTimeout = setTimeout(() => {
-      setZoom(initialZoom ?? 1)
+      setZoom(zoom)
 
       zoomAnimationEndTimeout = setTimeout(() => {
         setZoomAnimated(false)
@@ -305,12 +305,12 @@ function PanZoomProvider({
     resetZoomAnimation,
   ])
 
-  const handleResetPan = useCallback(() => {
+  const handleSetPan = useCallback((pan = initialPan ?? { x: 0, y: 0 }) => {
     resetPanAnimation()
     setPanAnimated(true)
 
     panAnimationStartTimeout = setTimeout(() => {
-      setPan(initialPan ?? { x: 0, y: 0 })
+      setPan(pan)
 
       panAnimationEndTimeout = setTimeout(() => {
         setPanAnimated(false)
@@ -357,23 +357,19 @@ function PanZoomProvider({
     mouseType,
     zoom,
     pan,
-    setZoom,
-    setPan,
     containerRef,
     contentRef,
     zoomIn: handleZoomInOrOut(-1),
     zoomOut: handleZoomInOrOut(1),
-    resetZoom: handleResetZoom,
-    resetPan: handleResetPan,
+    setZoom: handleSetZoom,
+    setPan: handleSetPan,
   }), [
     mouseType,
     zoom,
     pan,
-    setZoom,
-    setPan,
     handleZoomInOrOut,
-    handleResetZoom,
-    handleResetPan,
+    handleSetZoom,
+    handleSetPan,
   ])
 
   const panZoomContextExtraValue = useMemo<PanZoomExtraContextType>(() => ({
