@@ -11,8 +11,8 @@ import PanZoomExtraContext from '../contexts/PanZoomExtraContext'
 
 type Props = PropsWithChildren<{
   forceMouseType?: MouseType
-  initialZoom?: number
   initialPan?: Xy
+  initialZoom?: number
   isPanBounded?: boolean
   panBoundPadding?: Padding
   panBoundDelay?: number
@@ -36,12 +36,12 @@ function PanZoomProvider({
   children,
   forceMouseType,
   initialPan,
+  initialZoom,
   isPanBounded = true,
   panBoundPadding = { top: 0, right: 0, bottom: 0, left: 0 },
   panBoundDelay = 300,
   centerOnMount = true,
   centerOnMountDelay = 3 * 1000 / 60,
-  initialZoom,
   isZoomBounded = true,
   minZoom = 0.5,
   maxZoom = 2,
@@ -52,7 +52,7 @@ function PanZoomProvider({
   const contentRef = useRef<HTMLDivElement>(null)
 
   const [mouseType, setMouseType] = useState<MouseType>(forceMouseType ?? detectTouchscreen() ? 'touchscreen' : 'mouse')
-  const [pan, setPan] = useState(initialPan ?? { x: 0, y: 0 },)
+  const [pan, setPan] = useState(initialPan ?? { x: 0, y: 0 })
   const [zoom, setZoom] = useState(initialZoom ?? 1)
   const [isPinching, setIsPinching] = useState(false)
   const [shouldCenter, setShouldCenter] = useState(centerOnMount)
