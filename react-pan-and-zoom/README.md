@@ -19,9 +19,12 @@ npm install --save react-pan-and-zoom
 ## Usage
 
 ```jsx
-import { PanZoomProvider, PanZoom } from 'react-pan-and-zoom'
+import { PanZoomProvider, PanZoom, useSafeGestures } from 'react-pan-and-zoom'
 
 function App() {
+  // Disable swiping back and forward with two fingers in the browser
+  useSafeGestures()
+
   return (
     <PanZoomProvider>
       <PanZoom>

@@ -5,7 +5,7 @@ import { type FullGestureState, useGesture } from '@use-gesture/react'
 import type { MouseType, Padding, Xy } from '../types'
 import { ANIMATION_DURATION } from '../constants'
 import { detectTouchpad, detectTouchscreen } from '../utils'
-import PanZoomContext, { PanZoomContextType } from '../contexts/PanZoomContext'
+import PanZoomContext, { type PanZoomContextType } from '../contexts/PanZoomContext'
 import type { PanZoomExtraContextType } from '../contexts/PanZoomExtraContext'
 import PanZoomExtraContext from '../contexts/PanZoomExtraContext'
 

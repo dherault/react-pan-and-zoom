@@ -1,7 +1,7 @@
 {
   "name": "react-pan-and-zoom",
   "description": "A React component to pan and zoom using a trackpad, mouse or touchscreen",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "type": "module",
   "files": [
     "dist"
@@ -39,12 +39,12 @@
     "@use-gesture/react": "^10.3.1"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@vitejs/plugin-react": "^4.3.1",
-    "nodemon": "^3.1.4",
-    "typescript": "^5.5.4",
-    "vite": "^5.3.5",
-    "vite-plugin-dts": "^4.0.0-beta.1"
+    "@types/react": "^18.3.12",
+    "@vitejs/plugin-react": "^4.3.3",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0"
   },
   "peerDependencies": {
     "react": "^18.0.0",
