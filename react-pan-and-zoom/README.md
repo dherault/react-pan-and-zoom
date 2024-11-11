@@ -22,7 +22,7 @@ npm install --save react-pan-and-zoom
 import { PanZoomProvider, PanZoom, useSafeGestures } from 'react-pan-and-zoom'
 
 function App() {
-  // Disable swiping back and forward with two fingers in the browser
+  // Disable swiping the history back and forward with two fingers
   useSafeGestures()
 
   return (
